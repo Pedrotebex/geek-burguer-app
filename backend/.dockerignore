@@ -1,0 +1,3 @@
+# Ignora dependências e arquivos de build do backend
+node_modules
+.env

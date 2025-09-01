@@ -1,0 +1,52 @@
+# Define a versão do Docker Compose
+version: '3.8'
+
+# Define os serviços (contêineres) da aplicação
+services:
+  # Serviço do Banco de Dados MongoDB
+  mongo:
+    image: mongo:latest
+    container_name: geek-burguer-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  # Serviço do Backend (API Node.js)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    container_name: geek-burguer-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      # ADICIONADO: Partilha a pasta 'public' do frontend com o backend
+      - ./public:/app/public 
+    depends_on:
+      - mongo
+
+  # Serviço do Frontend (App React/Vite)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: geek-burguer-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+# Define o volume para persistir os dados do MongoDB
+volumes:
+  mongo-data:

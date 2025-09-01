@@ -1,0 +1,4 @@
+# Ignora dependências e arquivos de build do frontend
+node_modules
+dist
+.env

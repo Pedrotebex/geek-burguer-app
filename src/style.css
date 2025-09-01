@@ -1,0 +1,41 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap');
+@import "tailwindcss";
+html {
+  scroll-behavior: smooth;
+}
+/* Novas Variáveis do Design System */
+@theme {
+  /* A fonte Montserrat é ótima, apenas adicionei mais pesos para flexibilidade */
+  --font-sans: 'Montserrat', sans-serif;
+
+  /* Tipografia (mantida) */
+  --text-xs: 1rem;      /* 16px */
+  --text-sm: 1.25rem;     /* 20px */
+  --text-md: 1.5rem;      /* 24px */
+  --text-lg: 2rem;      /* 32px */
+  --text-xl: 3rem;      /* 48px */
+
+  /* Novas Cores - Tema Dark com Destaques Vibrantes */
+  --color-background: #12101E;  /* Fundo principal (quase preto) */
+  --color-surface:    #1D1A39;  /* Cor para superfícies, como cards */
+  --color-primary:    #7F3DFF;  /* Roxo principal para botões e links */
+  --color-accent:     #F7B801;  /* Amarelo-dourado para preços e destaques */
+  --color-success:    #34D399;  /* Verde para mensagens de sucesso */
+  
+  --color-text-primary:   #F5F5F5;  /* Texto principal (branco suave) */
+  --color-text-secondary: #A9A9A9;  /* Texto secundário (cinza claro) */
+
+  /* Espaçamento (mantido) */
+  --spacing-4-5: 1.125rem;  /* 18px */
+  --spacing-7-5: 1.875rem;  /* 30px */
+  --spacing-9-5: 2.375rem;  /* 38px */
+
+  /* Bordas (mantidas) */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+}
