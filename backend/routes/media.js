@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Obter todas as mídias
+// Rota para obter todas as mídias
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const mediaFiles = await Media.find().sort({ createdAt: -1 });
@@ -28,36 +28,41 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-// Fazer upload de uma nova mídia
-router.post("/", authMiddleware, upload.single('image'), async (req, res) => {
+// Rota para fazer upload de UMA OU VÁRIAS mídias (até 10 por vez)
+router.post("/", authMiddleware, upload.array('images', 10), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: "Nenhum ficheiro foi enviado." });
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ error: "Nenhum ficheiro foi enviado." });
+    }
     
-    const newMedia = new Media({
-      filename: req.file.filename,
-      imageUrl: `/uploads/${req.file.filename}`
+    // Mapeia cada ficheiro para uma promessa de salvar no banco de dados
+    const mediaPromises = req.files.map(file => {
+      const newMedia = new Media({
+        filename: file.filename,
+        imageUrl: `/uploads/${file.filename}`
+      });
+      return newMedia.save();
     });
     
-    await newMedia.save();
-    res.status(201).json(newMedia);
+    const savedMedia = await Promise.all(mediaPromises); // Executa todas as promessas
+    
+    res.status(201).json(savedMedia); // Retorna um array com as mídias salvas
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-// Apagar uma mídia
+// Rota para apagar uma mídia
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const media = await Media.findById(req.params.id);
         if (!media) return res.status(404).json({ error: "Mídia não encontrada." });
         
-        // Apaga o ficheiro do sistema
         const filePath = path.join(__dirname, '../../public', media.imageUrl);
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
         }
 
-        // Apaga o registo da base de dados
         await Media.findByIdAndDelete(req.params.id);
         
         res.json({ message: "Mídia apagada com sucesso." });
@@ -65,6 +70,5 @@ router.delete("/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ error: "Erro ao apagar mídia." });
     }
 });
-
 
 module.exports = router;
