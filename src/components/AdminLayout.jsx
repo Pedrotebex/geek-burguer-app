@@ -11,10 +11,12 @@ export default function AdminLayout() {
         navigate('/login');
     };
     
+    // Adicione o novo link "Banners" aqui
     const navLinks = [
         { to: "/admin/dashboard", icon: "dashboard", text: "Dashboard" },
         { to: "/admin/add-product", icon: "add_box", text: "Adicionar" },
-        { to: "/admin/media", icon: "photo_library", text: "Mídias" }
+        { to: "/admin/media", icon: "photo_library", text: "Mídias" },
+        { to: "/admin/banners", icon: "view_carousel", text: "Banners" } // <-- Adicionado
     ];
 
     return (

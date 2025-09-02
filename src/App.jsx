@@ -9,7 +9,8 @@ import DashboardPage from './pages/DashboardPage';
 import AddProductPage from './pages/AddProductPage';
 import EditProductPage from './pages/EditProductPage';
 import MenuPage from './pages/MenuPage';
-import MediaPage from './pages/MediaPage'; // Importe a nova página
+import MediaPage from './pages/MediaPage';
+import BannerManagementPage from './pages/BannerManagementPage'; // <-- Importe a nova página
 
 function App() {
   return (
@@ -33,8 +34,8 @@ function App() {
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="add-product" element={<AddProductPage />} />
             <Route path="edit-product/:id" element={<EditProductPage />} />
-            {/* Nova Rota para a Página de Mídias */}
             <Route path="media" element={<MediaPage />} />
+            <Route path="banners" element={<BannerManagementPage />} /> {/* <-- Adicione a nova rota */}
           </Route>
         </Routes>
       </Router>

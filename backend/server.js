@@ -4,14 +4,15 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const path = require("path");
-const fs = require("fs"); // Importe o 'fs'
+const fs = require("fs");
 const User = require("./models/user");
 const Product = require("./models/product");
-const Media = require("./models/media"); // Importe o modelo Media
+const Media = require("./models/media");
 
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/products");
 const mediaRoutes = require("./routes/media");
+const bannerRoutes = require("./routes/banners"); // <-- Adicionado
 
 dotenv.config();
 const app = express();
@@ -24,12 +25,13 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/media", mediaRoutes);
+app.use("/api/banners", bannerRoutes); // <-- Adicionado
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
   console.log("MongoDB conectado!");
   createDefaultAdmin(); 
-  syncMediaLibrary(); // <-- Chame a nova função de sincronização
+  syncMediaLibrary();
 })
 .catch(err => console.error("Erro ao conectar MongoDB:", err));
 
@@ -48,7 +50,6 @@ const createDefaultAdmin = async () => {
   }
 };
 
-// --- NOVA FUNÇÃO PARA SINCRONIZAR A BIBLIOTECA DE MÍDIAS ---
 const syncMediaLibrary = async () => {
     try {
         const uploadDir = path.join(__dirname, '../public/uploads');
