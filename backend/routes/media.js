@@ -18,6 +18,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+// Obter todas as mídias
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const mediaFiles = await Media.find().sort({ createdAt: -1 });
@@ -27,6 +28,7 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+// Fazer upload de uma nova mídia
 router.post("/", authMiddleware, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "Nenhum ficheiro foi enviado." });
@@ -43,28 +45,26 @@ router.post("/", authMiddleware, upload.single('image'), async (req, res) => {
   }
 });
 
-// Rota para apagar uma mídia
+// Apagar uma mídia
 router.delete("/:id", authMiddleware, async (req, res) => {
-  try {
-    const media = await Media.findById(req.params.id);
-    if (!media) {
-      return res.status(404).json({ error: "Mídia não encontrada." });
+    try {
+        const media = await Media.findById(req.params.id);
+        if (!media) return res.status(404).json({ error: "Mídia não encontrada." });
+        
+        // Apaga o ficheiro do sistema
+        const filePath = path.join(__dirname, '../../public', media.imageUrl);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+
+        // Apaga o registo da base de dados
+        await Media.findByIdAndDelete(req.params.id);
+        
+        res.json({ message: "Mídia apagada com sucesso." });
+    } catch (err) {
+        res.status(500).json({ error: "Erro ao apagar mídia." });
     }
-
-    // Apaga o ficheiro do servidor
-    const filePath = path.join(__dirname, '../../public', media.imageUrl);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-
-    // Apaga o registo da base de dados
-    await Media.findByIdAndDelete(req.params.id);
-
-    res.json({ message: "Mídia apagada com sucesso." });
-  } catch (err) {
-    console.error("Erro ao apagar mídia:", err);
-    res.status(500).json({ error: "Erro interno do servidor." });
-  }
 });
+
 
 module.exports = router;

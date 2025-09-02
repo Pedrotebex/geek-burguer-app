@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// ROTA PÚBLICA: Obter todos os produtos
+// Rota para obter todos os produtos
 router.get("/", async (req, res) => {
     try {
         const products = await Product.find({});
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-// ROTA PÚBLICA: Obter produtos em destaque, ordenados por 'featuredOrder'
+// Rota para obter produtos em destaque
 router.get("/featured", async (req, res) => {
     try {
         const featuredProducts = await Product.find({ isFeatured: true }).sort({ featuredOrder: 'asc' });
@@ -24,7 +24,7 @@ router.get("/featured", async (req, res) => {
     }
 });
 
-// ROTA PROTEGIDA: Obter um único produto por ID
+// Rota para obter um único produto por ID
 router.get("/:id", authMiddleware, async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -35,28 +35,27 @@ router.get("/:id", authMiddleware, async (req, res) => {
     }
 });
 
-// ROTA PROTEGIDA: Adicionar produto (sem upload de imagem, pois agora usa a biblioteca)
+// Rota para adicionar um novo produto (sem upload de imagem)
 router.post("/", authMiddleware, async (req, res) => {
-    try {
-        const { category, name, price, description, imageUrl } = req.body;
-        if (!imageUrl) {
-            return res.status(400).json({ error: "A imagem do produto é obrigatória." });
-        }
-        const newProduct = new Product({ category, name, price, description, imageUrl });
-        await newProduct.save();
-        res.status(201).json(newProduct);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
-    }
+  try {
+    const { category, name, price, description, imageUrl } = req.body;
+    if (!imageUrl) return res.status(400).json({ error: "O URL da imagem é obrigatório." });
+    
+    const newProduct = new Product({ category, name, price, description, imageUrl });
+    await newProduct.save();
+    res.status(201).json(newProduct);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
-
-// ROTA PROTEGIDA: Atualizar produto (modificada para lidar com isFeatured)
+// Rota para atualizar um produto
 router.put("/:id", authMiddleware, async (req, res) => {
     try {
         const { isFeatured, ...updateData } = req.body;
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ error: "Produto não encontrado" });
+
         if (typeof isFeatured === 'boolean' && product.isFeatured !== isFeatured) {
             product.isFeatured = isFeatured;
             if (isFeatured) {
@@ -64,15 +63,16 @@ router.put("/:id", authMiddleware, async (req, res) => {
                 product.featuredOrder = maxOrder ? maxOrder.featuredOrder + 1 : 0;
             }
         }
+        
         Object.assign(product, updateData);
         await product.save();
         res.json(product);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ error: "Erro ao atualizar produto." });
     }
 });
 
-// ROTA PROTEGIDA: Reordenar produtos em destaque
+// Rota para reordenar produtos em destaque
 router.put("/featured/reorder", authMiddleware, async (req, res) => {
     try {
         const { orderedProducts } = req.body;
@@ -86,7 +86,7 @@ router.put("/featured/reorder", authMiddleware, async (req, res) => {
     }
 });
 
-// ROTA PROTEGIDA: Apagar produto
+// Rota para apagar um produto
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const deletedProduct = await Product.findByIdAndDelete(req.params.id);

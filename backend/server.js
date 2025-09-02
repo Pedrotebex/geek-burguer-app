@@ -6,13 +6,12 @@ const bcrypt = require("bcrypt");
 const path = require("path");
 const fs = require("fs");
 const User = require("./models/user");
-const Product = require("./models/product");
 const Media = require("./models/media");
 
+// Importação das rotas
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/products");
 const mediaRoutes = require("./routes/media");
-const bannerRoutes = require("./routes/banners"); // <-- Adicionado
 
 dotenv.config();
 const app = express();
@@ -21,11 +20,10 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
-// Rotas
+// Utilização das rotas
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/media", mediaRoutes);
-app.use("/api/banners", bannerRoutes); // <-- Adicionado
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
