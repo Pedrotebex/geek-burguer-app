@@ -50,7 +50,7 @@ export default function FeaturedProductsPage() {
     const fetchProducts = async () => {
         const response = await fetch('/api/products');
         const allProducts = await response.json();
-        const eligible = allProducts.filter(p => ['Combos', 'Lanche', 'Porções'].includes(p.category));
+        const eligible = allProducts.filter(p => ['Combos', 'Lanche', 'Porções', 'Drinks'].includes(p.category));
         setFeatured(eligible.filter(p => p.isFeatured).sort((a, b) => a.featuredOrder - b.featuredOrder));
         setNonFeatured(eligible.filter(p => !p.isFeatured));
     };

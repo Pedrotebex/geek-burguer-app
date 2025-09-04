@@ -111,7 +111,7 @@ export default function MediaPage() {
     <>
       <div>
         <h1 className="text-3xl font-bold mb-6 text-text-primary">Biblioteca de Mídias</h1>
-        <div className="bg-surface p-6 rounded-lg shadow-md">
+        <div className="bg-surface p-6 rounded-lg flex flex-col gap-6 shadow-md">
           {isLoading ? (
             <p className="text-text-secondary">A carregar...</p>
           ) : error ? (
@@ -145,7 +145,7 @@ export default function MediaPage() {
                 ))}
               </div>
               {visibleCount < media.length && (
-                <div className="text-center mt-8">
+                <div className="text-center">
                   <button onClick={() => setVisibleCount(prev => prev + IMAGES_PER_PAGE)} className="bg-primary text-white font-bold px-6 py-2 rounded-full hover:bg-opacity-80">
                     Ver mais
                   </button>
